@@ -104,23 +104,20 @@ const bookingController = {
     getCustomerBookings: async (req, res) => {
         try {
             const customerId = req.user.customerId;
-            const { status, limit = 10, offset = 0 } = req.query;
+            const { status, limit = 50, offset = 0 } = req.query;
 
             let query = `
-        SELECT b.*, s."serviceName", s."serviceDurationMinutes",
-               v."vehicleRegistrationNumber", v."vehicleManufactureYear",
-               vb."vehicleBrandName", vm."vehicleModelName",
-               ts."timeSlotDate", ts."timeSlotStartTime", ts."timeSlotEndTime",
-               bs."bookingStatusName", bs."bookingStatusColor",
-               t."technicianId", 
-               u."userFirstName" as tech_first_name,
-               u."userLastName" as tech_last_name
+        SELECT b."bookingId" as booking_id, b."bookingReference" as booking_reference,
+               b."bookingScheduledDateTime" as scheduled_date_time,
+               b."bookingSpecialNotes" as special_notes,
+               b."bookingEstimatedPrice" as estimated_price,
+               s."serviceName" as service_name, s."serviceDurationMinutes" as duration_minutes,
+               v."vehicleRegistrationNumber" as registration_number,
+               bs."bookingStatusName" as booking_status, bs."bookingStatusColor" as status_color,
+               u."userFirstName" as tech_first_name, u."userLastName" as tech_last_name
         FROM "Bookings" b
         JOIN "Services" s ON b."serviceId" = s."serviceId"
         JOIN "Vehicles" v ON b."vehicleId" = v."vehicleId"
-        JOIN "VehicleBrands" vb ON v."vehicleBrandId" = vb."vehicleBrandId"
-        JOIN "VehicleModels" vm ON v."vehicleModelId" = vm."vehicleModelId"
-        JOIN "TimeSlots" ts ON b."timeSlotId" = ts."timeSlotId"
         JOIN "BookingStatuses" bs ON b."bookingStatusId" = bs."bookingStatusId"
         LEFT JOIN "Technicians" t ON b."technicianId" = t."technicianId"
         LEFT JOIN "Users" u ON t."userId" = u."userId"
@@ -296,15 +293,19 @@ const bookingController = {
     getAllBookings: async (req, res) => {
         try {
             const result = await pool.query(`
-                SELECT b.*, 
+                SELECT b."bookingId" as booking_id, b."bookingReference" as booking_reference,
+                       b."bookingScheduledDateTime" as scheduled_date_time,
+                       b."technicianId" as technician_id,
                        u."userFirstName" as customer_first_name, u."userLastName" as customer_last_name,
-                       s."serviceName", v."vehicleRegistrationNumber",
+                       s."serviceName" as service_name, v."vehicleRegistrationNumber" as registration_number,
+                       bs."bookingStatusName" as booking_status,
                        tu."userFirstName" as tech_first_name, tu."userLastName" as tech_last_name
                 FROM "Bookings" b
                 LEFT JOIN "Customers" c ON b."customerId" = c."customerId"
                 LEFT JOIN "Users" u ON c."userId" = u."userId"
                 LEFT JOIN "Services" s ON b."serviceId" = s."serviceId"
                 LEFT JOIN "Vehicles" v ON b."vehicleId" = v."vehicleId"
+                LEFT JOIN "BookingStatuses" bs ON b."bookingStatusId" = bs."bookingStatusId"
                 LEFT JOIN "Technicians" t ON b."technicianId" = t."technicianId"
                 LEFT JOIN "Users" tu ON t."userId" = tu."userId"
                 ORDER BY b."bookingScheduledDateTime" DESC
@@ -396,7 +397,16 @@ const bookingController = {
         try {
             const technicianId = req.user.technicianId;
             const result = await pool.query(
-                'SELECT * FROM "Bookings" WHERE "technicianId" = $1 ORDER BY "bookingScheduledDateTime" ASC',
+                `SELECT b."bookingId" as booking_id, b."bookingReference" as booking_reference,
+                        b."bookingScheduledDateTime" as scheduled_date_time,
+                        s."serviceName" as service_name, v."vehicleRegistrationNumber" as registration_number,
+                        bs."bookingStatusName" as booking_status
+                 FROM "Bookings" b
+                 JOIN "Services" s ON b."serviceId" = s."serviceId"
+                 JOIN "Vehicles" v ON b."vehicleId" = v."vehicleId"
+                 JOIN "BookingStatuses" bs ON b."bookingStatusId" = bs."bookingStatusId"
+                 WHERE b."technicianId" = $1 
+                 ORDER BY b."bookingScheduledDateTime" ASC`,
                 [technicianId]
             );
             res.json({ success: true, data: result.rows });

@@ -80,7 +80,13 @@ const vehicleController = {
 
     getAllBrands: async (req, res) => {
         try {
-            const result = await pool.query('SELECT * FROM "VehicleBrands" ORDER BY "vehicleBrandName"');
+            const result = await pool.query(`
+                SELECT "vehicleBrandId" as vehicle_brand_id, 
+                       "vehicleBrandName" as vehicle_brand_name,
+                       "vehicleBrandCountry" as vehicle_brand_country
+                FROM "VehicleBrands" 
+                ORDER BY "vehicleBrandName"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -89,7 +95,13 @@ const vehicleController = {
 
     getAllModels: async (req, res) => {
         try {
-            const result = await pool.query('SELECT * FROM "VehicleModels" ORDER BY "vehicleModelName"');
+            const result = await pool.query(`
+                SELECT "vehicleModelId" as vehicle_model_id, 
+                       "vehicleBrandId" as vehicle_brand_id,
+                       "vehicleModelName" as vehicle_model_name 
+                FROM "VehicleModels" 
+                ORDER BY "vehicleModelName"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -99,7 +111,14 @@ const vehicleController = {
     getModelsByBrand: async (req, res) => {
         try {
             const { brandId } = req.params;
-            const result = await pool.query('SELECT * FROM "VehicleModels" WHERE "vehicleBrandId" = $1 ORDER BY "vehicleModelName"', [brandId]);
+            const result = await pool.query(`
+                SELECT "vehicleModelId" as vehicle_model_id, 
+                       "vehicleBrandId" as vehicle_brand_id,
+                       "vehicleModelName" as vehicle_model_name 
+                FROM "VehicleModels" 
+                WHERE "vehicleBrandId" = $1 
+                ORDER BY "vehicleModelName"
+            `, [brandId]);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -108,7 +127,13 @@ const vehicleController = {
 
     getAllBodyTypes: async (req, res) => {
         try {
-            const result = await pool.query('SELECT * FROM "VehicleBodyTypes" ORDER BY "vehicleBodyTypeName"');
+            const result = await pool.query(`
+                SELECT "vehicleBodyTypeId" as vehicle_body_type_id, 
+                       "vehicleBodyTypeName" as vehicle_body_type_name,
+                       "vehicleBodyTypeDescription" as vehicle_body_type_description
+                FROM "VehicleBodyTypes" 
+                ORDER BY "vehicleBodyTypeName"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });

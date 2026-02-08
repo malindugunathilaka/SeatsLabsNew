@@ -48,8 +48,8 @@ function AdminDashboard({ currentUser }) {
         api.services.getAll(),
         api.services.getCategories(),
         isManager ? api.users.getTechnicians() : Promise.resolve({ data: { data: [] } }),
-        isManager ? api.vehicles.getBrands() : Promise.resolve({ data: [] }),
-        isManager ? api.vehicles.getBodyTypes() : Promise.resolve({ data: [] }),
+        isManager ? api.vehicles.getBrands() : Promise.resolve({ data: { data: [] } }),
+        isManager ? api.vehicles.getBodyTypes() : Promise.resolve({ data: { data: [] } }),
         isManager ? api.payments.getAll() : Promise.resolve({ data: { data: [] } }),
         isManager ? api.ads.getAllCampaigns() : Promise.resolve({ data: { data: [] } }),
         isManager ? api.ads.getAllAds() : Promise.resolve({ data: { data: [] } })

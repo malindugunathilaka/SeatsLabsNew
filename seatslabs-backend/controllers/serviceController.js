@@ -6,7 +6,12 @@ const serviceController = {
             const { categoryId, available } = req.query;
 
             let query = `
-        SELECT s.*, sc."serviceCategoryName" 
+        SELECT s."serviceId" as service_id, s."serviceName" as service_name, 
+               s."serviceDescription" as service_description,
+               s."serviceDurationMinutes" as duration_minutes, 
+               s."serviceBasePrice" as base_price,
+               s."serviceCategoryId" as service_category_id,
+               sc."serviceCategoryName" as service_category_name 
         FROM "Services" s
         LEFT JOIN "ServiceCategories" sc ON s."serviceCategoryId" = sc."serviceCategoryId"
         WHERE 1=1
@@ -107,7 +112,13 @@ const serviceController = {
 
     getAllCategories: async (req, res) => {
         try {
-            const result = await pool.query('SELECT * FROM "ServiceCategories" ORDER BY "serviceCategoryName"');
+            const result = await pool.query(`
+                SELECT "serviceCategoryId" as service_category_id, 
+                       "serviceCategoryName" as service_category_name,
+                       "serviceCategoryDescription" as service_category_description
+                FROM "ServiceCategories" 
+                ORDER BY "serviceCategoryName"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });

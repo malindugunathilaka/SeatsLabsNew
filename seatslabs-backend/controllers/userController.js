@@ -52,7 +52,12 @@ const userController = {
 
     getAllUsers: async (req, res) => {
         try {
-            const result = await pool.query('SELECT "userId", "userEmail", "userFirstName", "userLastName", "userIsActive" FROM "Users"');
+            const result = await pool.query(`
+                SELECT "userId" as user_id, "userEmail" as user_email, 
+                       "userFirstName" as user_first_name, "userLastName" as user_last_name, 
+                       "userIsActive" as user_is_active 
+                FROM "Users"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -61,7 +66,13 @@ const userController = {
 
     getAllCustomers: async (req, res) => {
         try {
-            const result = await pool.query('SELECT u.*, c."customerId" FROM "Users" u JOIN "Customers" c ON u."userId" = c."userId"');
+            const result = await pool.query(`
+                SELECT u."userId" as user_id, u."userEmail" as user_email, 
+                       u."userFirstName" as user_first_name, u."userLastName" as user_last_name,
+                       c."customerId" as customer_id
+                FROM "Users" u 
+                JOIN "Customers" c ON u."userId" = c."userId"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -70,7 +81,14 @@ const userController = {
 
     getAllTechnicians: async (req, res) => {
         try {
-            const result = await pool.query('SELECT u.*, t."technicianId", t."technicianSpecialization" FROM "Users" u JOIN "Technicians" t ON u."userId" = t."userId"');
+            const result = await pool.query(`
+                SELECT u."userId" as user_id, u."userFirstName" as user_first_name, u."userLastName" as user_last_name,
+                       t."technicianId" as technician_id, t."technicianSpecialization" as specialization,
+                       t."technicianSkillLevel" as skill_level, t."technicianIsAvailable" as is_available,
+                       t."technicianPerformanceRating" as performance_rating
+                FROM "Users" u 
+                JOIN "Technicians" t ON u."userId" = t."userId"
+            `);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -20,7 +20,16 @@ const paymentController = {
 
     getCustomerPayments: async (req, res) => {
         try {
-            const result = await pool.query('SELECT p.* FROM "Payments" p JOIN "Bookings" b ON p."bookingId" = b."bookingId" WHERE b."customerId" = $1', [req.user.customerId]);
+            const result = await pool.query(`
+                SELECT p."paymentId" as payment_id, p."paymentAmount" as amount, 
+                       p."paymentDateTime" as payment_date_time, 
+                       ps."paymentStatusName" as payment_status,
+                       b."bookingReference" as booking_reference
+                FROM "Payments" p 
+                JOIN "Bookings" b ON p."bookingId" = b."bookingId" 
+                JOIN "PaymentStatuses" ps ON p."paymentStatusId" = ps."paymentStatusId"
+                WHERE b."customerId" = $1
+            `, [req.user.customerId]);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -60,10 +69,14 @@ const paymentController = {
     getAllPayments: async (req, res) => {
         try {
             const result = await pool.query(`
-                SELECT p.*, b."bookingReference",
-                       u."userFirstName", u."userLastName"
+                SELECT p."paymentId" as payment_id, p."paymentAmount" as amount, 
+                       p."paymentDateTime" as payment_date_time,
+                       ps."paymentStatusName" as payment_status,
+                       b."bookingReference" as booking_reference,
+                       u."userFirstName" as user_first_name, u."userLastName" as user_last_name
                 FROM "Payments" p 
                 JOIN "Bookings" b ON p."bookingId" = b."bookingId"
+                JOIN "PaymentStatuses" ps ON p."paymentStatusId" = ps."paymentStatusId"
                 JOIN "Customers" c ON b."customerId" = c."customerId"
                 JOIN "Users" u ON c."userId" = u."userId"
                 ORDER BY p."paymentDateTime" DESC

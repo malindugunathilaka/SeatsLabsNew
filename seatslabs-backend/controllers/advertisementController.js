@@ -82,9 +82,14 @@ const advertisementController = {
     getAllCampaigns: async (req, res) => {
         try {
             const result = await pool.query(`
-                SELECT ac.*, ad."advertiserBusinessName" 
+                SELECT ac."adCampaignId" as campaign_id, ac."adCampaignName" as campaign_name, 
+                       ac."adCampaignType" as campaign_type, ac."adCampaignStartDate" as start_date, 
+                       ac."adCampaignEndDate" as end_date, ac."adCampaignBudget" as budget,
+                       ad."advertiserBusinessName" as business_name,
+                       acs."adCampaignStatusName" as status
                 FROM "AdCampaigns" ac
                 JOIN "Advertisers" ad ON ac."advertiserId" = ad."advertiserId"
+                JOIN "AdCampaignStatuses" acs ON ac."adCampaignStatusId" = acs."adCampaignStatusId"
                 ORDER BY ac."adCampaignCreatedAt" DESC
             `);
             res.json({ success: true, data: result.rows });
@@ -96,7 +101,9 @@ const advertisementController = {
     getAllAdvertisements: async (req, res) => {
         try {
             const result = await pool.query(`
-                SELECT a.*, ac."adCampaignName", ad."advertiserBusinessName"
+                SELECT a."advertisementId" as advertisement_id, a."advertisementTitle" as ad_title, 
+                       a."advertisementContent" as ad_content, a."advertisementIsApproved" as is_approved,
+                       ac."adCampaignName" as campaign_name, ad."advertiserBusinessName" as business_name
                 FROM "Advertisements" a
                 JOIN "AdCampaigns" ac ON a."adCampaignId" = ac."adCampaignId"
                 JOIN "Advertisers" ad ON ac."advertiserId" = ad."advertiserId"
