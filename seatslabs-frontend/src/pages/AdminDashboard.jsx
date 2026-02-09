@@ -206,7 +206,7 @@ function AdminDashboard({ currentUser }) {
                   <td>{b.customer_first_name} {b.customer_last_name}</td>
                   <td>{b.service_name}</td>
                   <td>{b.registration_number}</td>
-                  <td><span className={`status-badge status-${b.booking_status.toLowerCase().replace(' ', '-')}`}>{b.booking_status}</span></td>
+                  <td><span className={`status-badge status-${b.booking_status?.toLowerCase().replace(' ', '-') || 'pending'}`}>{b.booking_status}</span></td>
                   <td>
                     {isManager && b.booking_status !== 'Completed' ? (
                       <select
@@ -261,17 +261,23 @@ function AdminDashboard({ currentUser }) {
             </tr>
           </thead>
           <tbody>
-            {services.map(s => (
-              <tr key={s.service_id}>
-                <td>{s.service_name}</td>
-                <td>{s.service_category_name}</td>
-                <td>{s.duration_minutes}m</td>
-                <td>Rs. {parseFloat(s.base_price).toLocaleString()}</td>
-                <td>
-                  <button className="btn-small" onClick={() => alert('Edit soon')}>Edit</button>
-                </td>
+            {services.length > 0 ? (
+              services.map(s => (
+                <tr key={s.service_id}>
+                  <td>{s.service_name}</td>
+                  <td>{s.service_category_name}</td>
+                  <td>{s.duration_minutes}m</td>
+                  <td>Rs. {parseFloat(s.base_price).toLocaleString()}</td>
+                  <td>
+                    <button className="btn-small" onClick={() => alert('Edit soon')}>Edit</button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">No services found. Add your first service!</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -514,6 +520,14 @@ function AdminDashboard({ currentUser }) {
               <div className="form-group">
                 <label>Service Name</label>
                 <input type="text" required value={newService.serviceName} onChange={e => setNewService({ ...newService, serviceName: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea value={newService.serviceDescription} onChange={e => setNewService({ ...newService, serviceDescription: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Duration (Minutes)</label>
+                <input type="number" required value={newService.durationMinutes} onChange={e => setNewService({ ...newService, durationMinutes: e.target.value })} />
               </div>
               <div className="form-group">
                 <label>Base Price (Rs.)</label>

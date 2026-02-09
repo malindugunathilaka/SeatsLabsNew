@@ -44,11 +44,11 @@ function Booking({ services }) {
         try {
           const response = await api.services.getAll();
           const mapped = response.data.data.map(s => ({
-            id: s.serviceId,
-            name: s.serviceName,
-            description: s.serviceDescription,
-            price: parseFloat(s.serviceBasePrice),
-            duration: `${s.serviceDurationMinutes} mins`
+            id: s.service_id,
+            name: s.service_name,
+            description: s.service_description,
+            price: parseFloat(s.base_price),
+            duration: `${s.duration_minutes} mins`
           }));
           setLocalServices(mapped);
         } catch (error) {
@@ -162,7 +162,7 @@ function Booking({ services }) {
 
   // Success message component
   if (isSubmitted) {
-    const selectedTime = availableSlots.find(s => s.timeSlotId.toString() === formData.timeSlotId.toString())?.timeSlotStartTime || 'Selected Time';
+    const selectedTime = availableSlots.find(s => s.time_slot_id.toString() === formData.timeSlotId.toString())?.time_slot_start_time || 'Selected Time';
     const selectedServiceName = localServices.find(s => s.id.toString() === formData.serviceId.toString())?.name || 'Selected Service';
 
     return (
@@ -224,8 +224,8 @@ function Booking({ services }) {
               <select id="vehicleId" name="vehicleId" value={formData.vehicleId} onChange={handleChange} className={errors.vehicleId ? 'error' : ''}>
                 <option value="">-- Select Your Vehicle --</option>
                 {userVehicles.map(v => (
-                  <option key={v.vehicleId} value={v.vehicleId}>
-                    {v.vehicleRegistrationNumber} - {v.vehicleBrandName} {v.vehicleModelName}
+                  <option key={v.vehicle_id} value={v.vehicle_id}>
+                    {v.vehicle_registration_number} - {v.vehicle_brand_name} {v.vehicle_model_name}
                   </option>
                 ))}
               </select>
@@ -265,8 +265,8 @@ function Booking({ services }) {
               <select id="timeSlotId" name="timeSlotId" value={formData.timeSlotId} onChange={handleChange} disabled={!formData.date}>
                 <option value="">-- Select Time --</option>
                 {availableSlots.map(slot => (
-                  <option key={slot.timeSlotId} value={slot.timeSlotId}>
-                    {slot.timeSlotStartTime.substring(0, 5)} - {slot.timeSlotEndTime.substring(0, 5)}
+                  <option key={slot.time_slot_id} value={slot.time_slot_id}>
+                    {slot.time_slot_start_time.substring(0, 5)} - {slot.time_slot_end_time.substring(0, 5)}
                   </option>
                 ))}
               </select>

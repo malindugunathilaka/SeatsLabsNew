@@ -147,7 +147,7 @@ function MyVehicles() {
                                 <select name="brandId" value={newVehicle.brandId} onChange={handleInputChange} required className="form-input">
                                     <option value="">Select Brand</option>
                                     {brands.map(b => (
-                                        <option key={b.vehicleBrandId} value={b.vehicleBrandId}>{b.vehicleBrandName}</option>
+                                        <option key={b.vehicle_brand_id} value={b.vehicle_brand_id}>{b.vehicle_brand_name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -157,7 +157,7 @@ function MyVehicles() {
                                 <select name="modelId" value={newVehicle.modelId} onChange={handleInputChange} required className="form-input">
                                     <option value="">Select Model</option>
                                     {models.map(m => (
-                                        <option key={m.vehicleModelId} value={m.vehicleModelId}>{m.vehicleModelName}</option>
+                                        <option key={m.vehicle_model_id} value={m.vehicle_model_id}>{m.vehicle_model_name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -167,7 +167,7 @@ function MyVehicles() {
                                 <select name="bodyTypeId" value={newVehicle.bodyTypeId} onChange={handleInputChange} required className="form-input">
                                     <option value="">Select Body Type</option>
                                     {bodyTypes.map(bt => (
-                                        <option key={bt.vehicleBodyTypeId} value={bt.vehicleBodyTypeId}>{bt.vehicleBodyTypeName}</option>
+                                        <option key={bt.vehicle_body_type_id} value={bt.vehicle_body_type_id}>{bt.vehicle_body_type_name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -197,27 +197,27 @@ function MyVehicles() {
                 {vehicles.length > 0 ? (
                     <div className="bookings-grid">
                         {vehicles.map(vehicle => (
-                            <div key={vehicle.vehicleId} className="booking-card glass-panel">
+                            <div key={vehicle.vehicle_id} className="booking-card glass-panel">
                                 <div className="booking-header">
-                                    <span className="booking-id">{vehicle.vehicleRegistrationNumber}</span>
-                                    <span className="status-badge status-confirmed">{vehicle.vehicleBrandName}</span>
+                                    <span className="booking-id">{vehicle.vehicle_registration_number}</span>
+                                    <span className="status-badge status-confirmed">{vehicle.vehicle_brand_name}</span>
                                 </div>
                                 <div className="booking-details">
                                     <div className="detail-row">
                                         <span className="label">Model:</span>
-                                        <span className="value">{vehicle.vehicleModelName}</span>
+                                        <span className="value">{vehicle.vehicle_model_name}</span>
                                     </div>
                                     <div className="detail-row">
                                         <span className="label">Year:</span>
-                                        <span className="value">{vehicle.vehicleManufactureYear}</span>
+                                        <span className="value">{vehicle.vehicle_manufacture_year}</span>
                                     </div>
                                     <div className="detail-row">
                                         <span className="label">Color:</span>
-                                        <span className="value">{vehicle.vehicleColor || 'N/A'}</span>
+                                        <span className="value">{vehicle.vehicle_color || 'N/A'}</span>
                                     </div>
                                     <div className="detail-row">
                                         <span className="label">Mileage:</span>
-                                        <span className="value">{vehicle.vehicleMileage ? `${vehicle.vehicleMileage} km` : 'N/A'}</span>
+                                        <span className="value">{vehicle.vehicle_mileage ? `${vehicle.vehicle_mileage} km` : 'N/A'}</span>
                                     </div>
                                 </div>
                             </div>

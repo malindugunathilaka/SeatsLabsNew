@@ -58,7 +58,7 @@ const serviceController = {
          "serviceDurationMinutes", "serviceBasePrice", "serviceRequirements")
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-                [serviceCategoryId, serviceName, serviceDescription,
+                [parseInt(serviceCategoryId), serviceName, serviceDescription,
                     durationMinutes, basePrice, serviceRequirements]
             );
 

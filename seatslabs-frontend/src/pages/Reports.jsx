@@ -31,9 +31,16 @@ function Reports() {
 
             if (response.data.success) {
                 setMessage('Report generated successfully! Downloading...');
-                // Trigger download with token for authentication
                 const token = localStorage.getItem('token');
-                window.open(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/reports/download/${response.data.filename}?token=${token}`, '_blank');
+                const downloadUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/reports/download/${response.data.filename}?token=${token}`;
+                
+                // Create a hidden link and click it to trigger download without opening a new tab
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute('download', response.data.filename);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
             }
         } catch (error) {
             console.error(error);
@@ -105,9 +112,16 @@ function ReportCard({ card, onGenerate, loading }) {
     const [formData, setFormData] = useState(
         card.fields.reduce((acc, field) => ({ ...acc, [field.name]: field.defaultValue }), {})
     );
+    const [shaking, setShaking] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleGenerate = async () => {
+        setShaking(true);
+        setTimeout(() => setShaking(false), 500); // Reset shake after animation
+        await onGenerate(card.id, formData);
     };
 
     return (
@@ -131,8 +145,8 @@ function ReportCard({ card, onGenerate, loading }) {
             </div>
 
             <button
-                className="btn btn-primary"
-                onClick={() => onGenerate(card.id, formData)}
+                className={`btn btn-primary ${shaking ? 'button-shake' : ''}`}
+                onClick={handleGenerate}
                 disabled={loading}
             >
                 {loading ? 'Processing...' : 'Generate PDF'}

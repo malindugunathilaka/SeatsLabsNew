@@ -24,11 +24,11 @@ function App() {
     try {
       const response = await api.services.getAll();
       const mappedServices = response.data.data.map(s => ({
-        id: s.serviceId,
-        name: s.serviceName,
-        description: s.serviceDescription,
-        price: parseFloat(s.serviceBasePrice),
-        duration: `${s.serviceDurationMinutes} mins`
+        id: s.service_id,
+        name: s.service_name,
+        description: s.service_description,
+        price: parseFloat(s.base_price),
+        duration: `${s.duration_minutes} mins`
       }));
       setServices(mappedServices);
     } catch (error) {

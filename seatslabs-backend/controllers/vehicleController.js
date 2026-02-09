@@ -39,7 +39,19 @@ const vehicleController = {
                  if (customerRes.rows.length > 0) customerId = customerRes.rows[0].customerId;
              }
 
-            const result = await pool.query('SELECT v.*, vb."vehicleBrandName", vm."vehicleModelName" FROM "Vehicles" v JOIN "VehicleBrands" vb ON v."vehicleBrandId" = vb."vehicleBrandId" JOIN "VehicleModels" vm ON v."vehicleModelId" = vm."vehicleModelId" WHERE v."customerId" = $1', [customerId]);
+            const result = await pool.query(`
+                SELECT v."vehicleId" as vehicle_id, 
+                       v."vehicleRegistrationNumber" as vehicle_registration_number,
+                       v."vehicleManufactureYear" as vehicle_manufacture_year,
+                       v."vehicleColor" as vehicle_color,
+                       v."vehicleMileage" as vehicle_mileage,
+                       vb."vehicleBrandName" as vehicle_brand_name, 
+                       vm."vehicleModelName" as vehicle_model_name 
+                FROM "Vehicles" v 
+                JOIN "VehicleBrands" vb ON v."vehicleBrandId" = vb."vehicleBrandId" 
+                JOIN "VehicleModels" vm ON v."vehicleModelId" = vm."vehicleModelId" 
+                WHERE v."customerId" = $1
+            `, [customerId]);
             res.json({ success: true, data: result.rows });
         } catch (error) {
             res.status(500).json({ error: error.message });

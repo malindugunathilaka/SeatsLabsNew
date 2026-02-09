@@ -435,7 +435,11 @@ const bookingController = {
         try {
             const { date } = req.query;
             const result = await pool.query(
-                `SELECT * FROM "TimeSlots" 
+                `SELECT "timeSlotId" as time_slot_id,
+                        "timeSlotDate" as time_slot_date,
+                        "timeSlotStartTime" as time_slot_start_time,
+                        "timeSlotEndTime" as time_slot_end_time
+                 FROM "TimeSlots" 
                  WHERE DATE("timeSlotDate") = DATE($1) 
                  AND "timeSlotIsAvailable" = true 
                  AND "timeSlotCurrentBookings" < "timeSlotMaxCapacity"
